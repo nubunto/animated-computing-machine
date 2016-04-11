@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+<body>
+	<h2>Eventos:</h2>
+	<ul id="events-list">
+	</ul>
+	<script>
+		var ws = new WebSocket('ws://localhost:8080/');
+		var eventsUl = document.querySelector('#events-list');
+		ws.onopen = function(e) {
+			console.log(e)
+		}
+		ws.onmessage = function(e) {
+			var code = JSON.stringify(e.data);
+			var codeTag = document.createElement('code');
+			codeTag.innerText = code;
+			var liTag = document.createElement('li');
+			liTag.appendChild(codeTag);
+			eventsUl.appendChild(liTag);
+		}
+	</script>
+</body>
+</html>
