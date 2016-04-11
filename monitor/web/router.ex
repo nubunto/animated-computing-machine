@@ -14,19 +14,14 @@ defmodule Monitor.Router do
   end
 
   scope "/", Monitor do
-    pipe_through :browser # Use the default browser stack
+    pipe_through :browser
 
     get "/", PageController, :index
-    resources "/applications", ApplicationController
   end
 
-  scope "/api", Monitor do
+  scope "api/", Monitor do
     pipe_through :api
     resources "/events", EventController, except: [:new, :edit]
+    resources "/applications", ApplicationController, except: [:new, :edit]
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", Monitor do
-  #   pipe_through :api
-  # end
 end

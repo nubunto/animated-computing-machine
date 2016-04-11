@@ -15,7 +15,7 @@ defmodule Monitor.EventController do
 
     case Repo.insert(changeset) do
       {:ok, event} ->
-        Monitor.Endpoint.broadcast "events:lobby", "new event", %{event: event.data}
+        Monitor.Endpoint.broadcast("events:lobby", "new event", %{type: event.type, origin: event.origin, data: event.data})
         conn
         |> put_status(:created)
         |> put_resp_header("location", event_path(conn, :show, event))

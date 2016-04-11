@@ -4,12 +4,13 @@ defmodule Monitor.Event do
   schema "events" do
     field :origin, :string
     field :data, :map
+    field :type, :string
 
     timestamps
   end
 
-  @required_fields ~w(origin data)
-  @optional_fields ~w()
+  @required_fields ~w(origin type)
+  @optional_fields ~w(data)
 
   @doc """
   Creates a changeset based on the `model` and `params`.

@@ -7,36 +7,28 @@ defmodule Monitor.ApplicationController do
 
   def index(conn, _params) do
     applications = Repo.all(Application)
-    render(conn, "index.html", applications: applications)
-  end
-
-  def new(conn, _params) do
-    changeset = Application.changeset(%Application{})
-    render(conn, "new.html", changeset: changeset)
+    render(conn, "index.json", applications: applications)
   end
 
   def create(conn, %{"application" => application_params}) do
     changeset = Application.changeset(%Application{}, application_params)
 
     case Repo.insert(changeset) do
-      {:ok, _application} ->
+      {:ok, application} ->
         conn
-        |> put_flash(:info, "Application created successfully.")
-        |> redirect(to: application_path(conn, :index))
+        |> put_status(:created)
+        |> put_resp_header("location", application_path(conn, :show, application))
+        |> render("show.json", application: application)
       {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset)
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(Monitor.ChangesetView, "error.json", changeset: changeset)
     end
   end
 
   def show(conn, %{"id" => id}) do
     application = Repo.get!(Application, id)
-    render(conn, "show.html", application: application)
-  end
-
-  def edit(conn, %{"id" => id}) do
-    application = Repo.get!(Application, id)
-    changeset = Application.changeset(application)
-    render(conn, "edit.html", application: application, changeset: changeset)
+    render(conn, "show.json", application: application)
   end
 
   def update(conn, %{"id" => id, "application" => application_params}) do
@@ -45,11 +37,11 @@ defmodule Monitor.ApplicationController do
 
     case Repo.update(changeset) do
       {:ok, application} ->
-        conn
-        |> put_flash(:info, "Application updated successfully.")
-        |> redirect(to: application_path(conn, :show, application))
+        render(conn, "show.json", application: application)
       {:error, changeset} ->
-        render(conn, "edit.html", application: application, changeset: changeset)
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(Monitor.ChangesetView, "error.json", changeset: changeset)
     end
   end
 
@@ -60,8 +52,6 @@ defmodule Monitor.ApplicationController do
     # it to always work (and if it does not, it will raise).
     Repo.delete!(application)
 
-    conn
-    |> put_flash(:info, "Application deleted successfully.")
-    |> redirect(to: application_path(conn, :index))
+    send_resp(conn, :no_content, "")
   end
 end

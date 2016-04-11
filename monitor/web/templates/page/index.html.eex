@@ -1,3 +1,12 @@
 <h1>Events</h1>
-<ul id="events">
-</ul>
+<div id="demo">
+  <ul>
+    <li v-for="event in events">
+      <strong>Origin: {{event.origin}}</strong><br>
+      <strong>Type: {{event.type}}</strong>
+      <span v-for="(key, value) of event.data">
+        {{key}} -> {{value}}
+      </span>
+    </li>
+  </ul>
+</div>
